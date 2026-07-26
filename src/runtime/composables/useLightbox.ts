@@ -19,7 +19,7 @@ export function useLightbox() {
       ? (document.activeElement as HTMLElement | null)
       : null
     state.isOpen = true
-    state.options.onOpen?.(items[clampedIndex], clampedIndex)
+    state.options.onOpen?.(items[clampedIndex]!, clampedIndex)
   }
 
   function close() {
@@ -37,7 +37,7 @@ export function useLightbox() {
       : Math.min(Math.max(index, 0), items.length - 1)
     if (nextIndex === state.activeIndex) return
     state.activeIndex = nextIndex
-    options.onNavigate?.(items[nextIndex], nextIndex)
+    options.onNavigate?.(items[nextIndex]!, nextIndex)
   }
 
   function next() {

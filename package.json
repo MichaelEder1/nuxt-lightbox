@@ -23,10 +23,9 @@
     "video-player"
   ],
   "main": "./dist/module.mjs",
-  "types": "./dist/types.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types.d.ts",
+      "types": "./dist/types.d.mts",
       "import": "./dist/module.mjs"
     }
   },
@@ -52,18 +51,18 @@
     "nuxt": "^3.13.0 || ^4.0.0"
   },
   "devDependencies": {
-    "@nuxt/eslint-config": "^0.5.0",
-    "@nuxt/module-builder": "^0.8.0",
+    "@nuxt/eslint-config": "^1.16.0",
+    "@nuxt/module-builder": "^1.0.3",
     "@nuxt/schema": "^3.13.0 || ^4.0.0",
-    "@playwright/test": "^1.61.1",
-    "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/test-utils": "^2.4.6",
-    "eslint": "^9.9.0",
-    "happy-dom": "^15.0.0",
-    "nuxi": "^3.13.0",
-    "nuxt": "^3.13.0",
-    "typescript": "^5.5.0",
-    "vitest": "^2.0.0",
-    "vue-tsc": "^2.0.0"
+    "@playwright/test": "^1.62.0",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vue/test-utils": "^2.4.11",
+    "eslint": "^10.8.0",
+    "happy-dom": "^20.11.1",
+    "nuxi": "^3.37.0",
+    "nuxt": "^4.5.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10",
+    "vue-tsc": "^3.3.8"
   }
 }
