@@ -356,3 +356,11 @@ useLightbox().open(items, 0, { transitionName: 'my-lightbox' })
   opacity: 0;
 }
 ```
+
+## Project status
+
+This is a small side project maintained by one person in their spare time —
+not a funded or team-backed library. Bug reports and PRs are welcome, but
+please don't expect fast turnaround, especially on larger PRs; small,
+focused ones with a clear repro are much easier for me to review. If it goes
+quiet for a while, that's why.
