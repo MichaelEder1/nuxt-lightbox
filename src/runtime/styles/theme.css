@@ -1,0 +1,376 @@
+@import './variables.css';
+
+.nuxt-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: var(--nl-z-index);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: system-ui, sans-serif;
+}
+
+.nuxt-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: var(--nl-backdrop-bg);
+  backdrop-filter: blur(var(--nl-backdrop-blur));
+}
+
+.nuxt-lightbox__dialog {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--nl-spacing);
+  max-width: min(94vw, 1600px);
+  max-height: 92vh;
+}
+
+/* A fixed-size frame (not sized to its current content) so: (1) the
+   displayed item never gets cropped — media inside it sizes via
+   max-width/max-height + auto, preserving its own aspect ratio and
+   letterboxing within the frame rather than being forced/stretched to
+   fill it; (2) outgoing and incoming items have a stable box to slide
+   across during navigation instead of the frame jumping to match each
+   item's own size. */
+.nuxt-lightbox__stage {
+  order: 1;
+  position: relative;
+  width: min(94vw, 1600px);
+  height: 78vh;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: var(--nl-border-radius);
+}
+
+.nuxt-lightbox__media {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  border-radius: var(--nl-border-radius);
+  touch-action: none;
+}
+
+.nuxt-lightbox__media--embed {
+  /* No intrinsic size of its own (unlike an image/video) — aspect-ratio
+     gives the auto-sizing above something to compute a fitted box from. */
+  aspect-ratio: 16 / 9;
+}
+
+.nuxt-lightbox__error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--nl-fg-color);
+  padding: var(--nl-spacing);
+}
+
+.nuxt-lightbox__caption {
+  order: 2;
+  color: var(--nl-fg-color);
+  text-align: center;
+  max-width: 60ch;
+}
+
+.nuxt-lightbox__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.nuxt-lightbox__description {
+  margin: 0.25rem 0 0;
+  color: var(--nl-muted-color);
+  font-size: 0.9rem;
+}
+
+.nuxt-lightbox__prev,
+.nuxt-lightbox__next,
+.nuxt-lightbox__close,
+.nuxt-lightbox__action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--nl-control-size);
+  height: var(--nl-control-size);
+  flex: 0 0 auto;
+  border-radius: var(--nl-control-radius);
+  border: none;
+  background: var(--nl-control-bg);
+  color: var(--nl-fg-color);
+  cursor: pointer;
+  transition: background var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox__prev:hover,
+.nuxt-lightbox__next:hover,
+.nuxt-lightbox__close:hover,
+.nuxt-lightbox__action-btn:hover {
+  background: var(--nl-control-bg-hover);
+}
+
+.nuxt-lightbox__icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Prev/next float at the viewport edges, vertically centered, regardless
+   of how wide the dialog/image itself renders. position: fixed anchors
+   to the real viewport ONLY as long as no ancestor has a `transform`
+   applied (a transformed ancestor becomes the containing block instead —
+   see the note on the open/close transition below, which deliberately
+   keeps its scale effect off any ancestor of these buttons). */
+.nuxt-lightbox__prev,
+.nuxt-lightbox__next {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+.nuxt-lightbox__prev {
+  left: var(--nl-spacing);
+}
+
+.nuxt-lightbox__next {
+  right: var(--nl-spacing);
+}
+
+/* Close + action buttons are grouped into one visually joined cluster,
+   pinned to the top-right corner — the wrapper carries the shared
+   background and outer rounding; overflow: hidden clips the square
+   buttons inside it into that rounded shape without needing per-button
+   corner rules.
+
+   Close is always the rightmost button, action buttons sit to its left —
+   but Close stays FIRST in the DOM (see LightboxControls.vue), so the
+   focus trap still lands on it first when the dialog opens. `order` here
+   only changes paint position, not DOM/tab order: action buttons share
+   order: 1 (so they keep their own v-for order relative to each other),
+   Close is order: 2, landing after all of them regardless of how many
+   there are. */
+.nuxt-lightbox__toolbar {
+  position: fixed;
+  top: var(--nl-spacing);
+  right: var(--nl-spacing);
+  z-index: 2;
+  display: flex;
+  background: var(--nl-control-bg);
+  border-radius: var(--nl-control-radius);
+  overflow: hidden;
+}
+
+.nuxt-lightbox__toolbar .nuxt-lightbox__close,
+.nuxt-lightbox__toolbar .nuxt-lightbox__action-btn {
+  border-radius: 0;
+}
+
+.nuxt-lightbox__toolbar .nuxt-lightbox__close {
+  order: 2;
+}
+
+.nuxt-lightbox__toolbar .nuxt-lightbox__action-btn {
+  order: 1;
+  /* A right-side separator on every action button, rather than a
+     DOM-adjacency-based `+ button` selector, so it stays correct
+     regardless of the order/DOM mismatch above: it draws one line
+     between each pair of visually-adjacent buttons (action-to-action,
+     and the last action to Close) with none on the outer edges. */
+  border-right: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.nuxt-lightbox__counter {
+  order: 3;
+  color: var(--nl-muted-color);
+  font-size: 0.85rem;
+  min-width: 4ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.nuxt-lightbox__thumbnails {
+  order: 4;
+  display: flex;
+  gap: var(--nl-thumbnail-gap);
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.nuxt-lightbox__thumbnail {
+  flex: 0 0 auto;
+  width: var(--nl-thumbnail-size);
+  height: var(--nl-thumbnail-size);
+  border-radius: var(--nl-thumbnail-radius);
+  border: 2px solid transparent;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox__thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.nuxt-lightbox__thumbnail--active {
+  opacity: 1;
+  border: var(--nl-thumbnail-active-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuxt-lightbox,
+  .nuxt-lightbox__backdrop,
+  .nuxt-lightbox__dialog,
+  .nuxt-lightbox__stage,
+  .nuxt-lightbox__media,
+  .nuxt-lightbox__error,
+  .nuxt-lightbox__prev,
+  .nuxt-lightbox__next,
+  .nuxt-lightbox__close,
+  .nuxt-lightbox__action-btn,
+  .nuxt-lightbox__thumbnail {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.nuxt-lightbox__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* The whole overlay (backdrop + dialog) fades together as one unit —
+   the stage additionally scales, nested inside the same enter/leave
+   window, so nothing on screen pops in/out instantly; everything settles
+   together. A custom transitionName only needs to restyle these two
+   selectors to fully replace the default open/close animation.
+
+   The scale is applied to .nuxt-lightbox__stage specifically, NOT
+   .nuxt-lightbox__dialog: prev/next/close are position: fixed, and a
+   `transform` on any of their ANCESTORS (dialog is one) makes fixed
+   descendants position themselves relative to that transformed ancestor
+   instead of the real viewport for as long as the transform is animating
+   — they'd visibly jump from "near the shrunk dialog" to "the actual
+   screen edges" the instant the transition finished. Stage is a sibling
+   of the controls, not their ancestor, so it can animate freely. */
+.nuxt-lightbox-fade-enter-active,
+.nuxt-lightbox-fade-leave-active {
+  transition: opacity var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox-fade-enter-from,
+.nuxt-lightbox-fade-leave-to {
+  opacity: 0;
+}
+
+.nuxt-lightbox-fade-enter-active .nuxt-lightbox__stage,
+.nuxt-lightbox-fade-leave-active .nuxt-lightbox__stage {
+  transition: transform var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox-fade-enter-from .nuxt-lightbox__stage,
+.nuxt-lightbox-fade-leave-to .nuxt-lightbox__stage {
+  transform: scale(0.97);
+}
+
+/* backdrop-filter doesn't reliably cross-fade just by riding the parent's
+   opacity transition above — browsers can snapshot/promote the blur layer
+   independently, so it visibly "pops" to full strength well before the
+   opacity tween finishes instead of ramping smoothly with it. Animating
+   the blur radius and background alpha directly here fixes that regardless
+   of how any particular browser handles the parent fade. */
+.nuxt-lightbox-fade-enter-active .nuxt-lightbox__backdrop,
+.nuxt-lightbox-fade-leave-active .nuxt-lightbox__backdrop {
+  transition: backdrop-filter var(--nl-transition-duration) var(--nl-transition-easing),
+    background-color var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox-fade-enter-from .nuxt-lightbox__backdrop,
+.nuxt-lightbox-fade-leave-to .nuxt-lightbox__backdrop {
+  background-color: transparent;
+  backdrop-filter: blur(0px);
+}
+
+/* Directional cross-slide for prev/next navigation within the stage —
+   see LightboxStage.vue, which picks forward/backward based on whether
+   activeIndex moved up or down (with loop-aware wraparound handling). */
+.nuxt-lightbox-slide-forward-enter-active,
+.nuxt-lightbox-slide-forward-leave-active,
+.nuxt-lightbox-slide-backward-enter-active,
+.nuxt-lightbox-slide-backward-leave-active {
+  transition: translate var(--nl-transition-duration) var(--nl-transition-easing),
+    opacity var(--nl-transition-duration) var(--nl-transition-easing);
+}
+
+.nuxt-lightbox-slide-forward-enter-from {
+  translate: 36px 0;
+  opacity: 0;
+}
+
+.nuxt-lightbox-slide-forward-leave-to {
+  translate: -36px 0;
+  opacity: 0;
+}
+
+.nuxt-lightbox-slide-backward-enter-from {
+  translate: -36px 0;
+  opacity: 0;
+}
+
+.nuxt-lightbox-slide-backward-leave-to {
+  translate: 36px 0;
+  opacity: 0;
+}
+
+@media (max-width: 640px) {
+  .nuxt-lightbox__prev,
+  .nuxt-lightbox__next,
+  .nuxt-lightbox__close,
+  .nuxt-lightbox__action-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .nuxt-lightbox__icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .nuxt-lightbox__prev {
+    left: 0.5rem;
+  }
+
+  .nuxt-lightbox__next {
+    right: 0.5rem;
+  }
+
+  .nuxt-lightbox__toolbar {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .nuxt-lightbox__stage {
+    height: 62vh;
+  }
+
+  .nuxt-lightbox__dialog {
+    max-width: 100vw;
+    gap: 0.65rem;
+  }
+}

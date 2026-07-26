@@ -1,0 +1,31 @@
+:root {
+  /* Layout */
+  --nl-z-index: 1000;
+  --nl-spacing: 1rem;
+  --nl-border-radius: 10px;
+
+  /* Backdrop */
+  --nl-backdrop-bg: rgba(18, 18, 20, 0.86);
+  --nl-backdrop-blur: 12px;
+
+  /* Typography / color */
+  --nl-fg-color: #fff;
+  --nl-muted-color: rgba(255, 255, 255, 0.55);
+  --nl-accent-color: #fff;
+
+  /* Controls */
+  --nl-control-size: 44px;
+  --nl-control-radius: 10px;
+  --nl-control-bg: rgba(255, 255, 255, 0.08);
+  --nl-control-bg-hover: rgba(255, 255, 255, 0.14);
+
+  /* Thumbnails */
+  --nl-thumbnail-size: 64px;
+  --nl-thumbnail-radius: 6px;
+  --nl-thumbnail-gap: 8px;
+  --nl-thumbnail-active-border: 2px solid var(--nl-accent-color);
+
+  /* Transitions */
+  --nl-transition-duration: 320ms;
+  --nl-transition-easing: cubic-bezier(0.16, 1, 0.3, 1);
+}

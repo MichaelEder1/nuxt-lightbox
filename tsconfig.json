@@ -1,0 +1,15 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*.ts",
+    ".nuxt/nuxt.d.ts"
+  ],
+  "exclude": [
+    "playground",
+    "dist"
+  ]
+}

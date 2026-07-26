@@ -1,0 +1,9 @@
+// The playground is a separate Nuxt app with its own .nuxt/tsconfig.json.
+// Keeping this separate from the root tsconfig.json (which extends the module's .nuxt/tsconfig.json)
+// was necessary for `npx nuxi typecheck` to pass in Task 1's verification step.
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "strict": true
+  }
+}

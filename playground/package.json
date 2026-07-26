@@ -1,0 +1,8 @@
+{
+  "name": "nuxt-lightbox-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxi dev"
+  }
+}
