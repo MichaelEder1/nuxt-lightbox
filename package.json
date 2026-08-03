@@ -1,6 +1,9 @@
 {
-  "name": "nuxt-lightbox",
+  "name": "@michaeleder1/nuxt-lightbox",
   "version": "0.1.0",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "description": "A modern, typed, SSR-safe lightbox module for Nuxt 3/4",
   "type": "module",
   "license": "MIT",
